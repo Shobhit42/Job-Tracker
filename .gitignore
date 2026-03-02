@@ -1,0 +1,70 @@
+# Visual Studio
+.vs/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+out/
+
+# .NET
+*.nupkg
+*.snupkg
+project.lock.json
+project.fragment.lock.json
+artifacts/
+packages/
+!**/packages/repositories.config
+
+# Publish output
+publish/
+**/publish/
+
+# Environment files (NEVER push these)
+.env
+.env.local
+appsettings.*.json
+!appsettings.json
+secrets.json
+**/secrets.json
+
+# Rider IDE
+.idea/
+
+# VS Code
+.vscode/
+
+# Node (for frontend later)
+node_modules/
+npm-debug.log
+dist/
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Hangfire (local DB files)
+*.db
+*.db-shm
+*.db-wal
+
+# Logs
+*.log
+logs/
+
+# Test results
+TestResults/
+coverage/
+*.coverage
+*.coveragexml
+
+# Docker
+.dockerignore
+
+# Chrome Extension build
+chrome-extension/dist/
+chrome-extension/node_modules/

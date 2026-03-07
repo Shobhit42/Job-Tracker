@@ -26,7 +26,7 @@ namespace JobTracker.Application.Behaviors
             var response = await next();
 
             _logger.LogInformation("Handled {RequestName} successfully", requestName);
-            return 
+            return response;
         }
     }
 }

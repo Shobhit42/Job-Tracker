@@ -29,7 +29,7 @@ namespace JobTracker.Application.Features.Skill.Command
             if(!applicationExists)
                 throw new NotFoundException(nameof(JobApplication), request.JobApplicationId);
 
-            var existingSkill = await _context.Skills.FirstOrDefaultAsync(x => x.Name == request.SkillName && x.UserId == _currentUserService.UserId, cancellationToken);
+            var existingSkill = await _context.Skills.FirstOrDefaultAsync(x => x.Name == request.SkillName, cancellationToken);
 
             if(existingSkill is null)
             {
@@ -37,7 +37,6 @@ namespace JobTracker.Application.Features.Skill.Command
                 {
                     Name = request.SkillName,
                     Category = request.Category,
-                    UserId = _currentUserService.UserId,
                 };
                 _context.Skills.Add(existingSkill);
             }

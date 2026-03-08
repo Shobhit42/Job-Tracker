@@ -5,7 +5,7 @@ namespace JobTracker.Domain.Entities;
 
 public class JobApplication : BaseEntity
 {
-    public string UserId { get; set; } = string.Empty;
+    public Guid UserId { get; set; }
     public string CompanyName { get; set; } = string.Empty;
     public string JobTitle { get; set; } = string.Empty;
     public string? JobUrl { get; set; }

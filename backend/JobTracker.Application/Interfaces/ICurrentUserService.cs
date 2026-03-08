@@ -8,6 +8,6 @@ namespace JobTracker.Application.Interfaces
 {
     public interface ICurrentUserService
     {
-        string? UserId { get; }
+        public Guid UserId { get; }
     }
 }

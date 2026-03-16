@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace JobTracker.Application.Features.JobApplications.Commands.UpateJobApplication
 {
-    internal class UpdateJobApplicationCommand : IRequest<Guid>
+    public class UpdateJobApplicationCommand : IRequest<Guid>
     {
         public required Guid Id { get; init; }
         public required string CompanyName { get; init; }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using JobTracker.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,11 +9,15 @@ namespace JobTracker.Application.Features.JobApplications.Commands.AddJobApplica
 {
     public class AddJobApplicationDto
     {
-        public Guid Id { get; init; }
-        public string CompanyName { get; init; } = string.Empty;
-        public string JobTitle { get; init; } = string.Empty;
-        public string Status { get; init; } = string.Empty;
-        public DateTime AppliedDate { get; init; }
-        public DateTime CreatedAt { get; init; }
+        public required string CompanyName { get; init; }
+        public required string JobTitle { get; init; }
+        public string? JobUrl { get; init; }
+        public string? JobDescription { get; init; }
+        public string? Location { get; init; }
+        public decimal? SalaryOffered { get; init; }
+        public string? Notes { get; init; }
+        public DateTime? OfferDeadline { get; init; }
+        public Platform Platform { get; init; } = Platform.Other;
+        public DateTime AppliedDate { get; init; } = DateTime.UtcNow;
     }
 }

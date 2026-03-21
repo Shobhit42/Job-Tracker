@@ -41,11 +41,11 @@ namespace JobTracker.Infrastructure
 
             services.AddHttpContextAccessor();
 
-            var jwtKey = configuration["Jwt:Key"]
-            ?? throw new InvalidOperationException("JWT Key is not configured.");
-            var jwtIssuer = configuration["Jwt:Issuer"]
+            var jwtKey = configuration["JwtSettings:Secret"]
+                ?? throw new InvalidOperationException("JWT Key is not configured.");
+            var jwtIssuer = configuration["JwtSettings:Issuer"]
                 ?? throw new InvalidOperationException("JWT Issuer is not configured.");
-            var jwtAudience = configuration["Jwt:Audience"]
+            var jwtAudience = configuration["JwtSettings:Audience"]
                 ?? throw new InvalidOperationException("JWT Audience is not configured.");
 
             services.AddAuthentication(options =>
@@ -68,6 +68,8 @@ namespace JobTracker.Infrastructure
             });
 
             services.AddScoped<ICurrentUserService, CurrentUserService>();
+            services.AddScoped<IJwtService, JwtService>();
+            services.AddScoped<IAuthService, AuthService>();
             return services;
         }
     }

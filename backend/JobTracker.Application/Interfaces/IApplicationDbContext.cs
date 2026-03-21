@@ -16,6 +16,7 @@ namespace JobTracker.Application.Interfaces
         DbSet<Tag> Tags { get; }
         DbSet<JobApplicationSkill> JobApplicationSkills { get; }
         DbSet<JobApplicationTag> JobApplicationTags { get; }
+        DbSet<RefreshToken> RefreshTokens { get; }
         Task<int> SaveChangesAsync(CancellationToken cancellationToken = default);
     }
 }

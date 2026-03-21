@@ -22,6 +22,7 @@ namespace JobTracker.Infrastructure.Persistence
         public DbSet<Tag> Tags => Set<Tag>();
         public DbSet<JobApplicationSkill> JobApplicationSkills => Set<JobApplicationSkill>();
         public DbSet<JobApplicationTag> JobApplicationTags => Set<JobApplicationTag>();
+        public DbSet<RefreshToken> RefreshTokens => Set<RefreshToken>();
 
         protected override void OnModelCreating(ModelBuilder builder)
         {

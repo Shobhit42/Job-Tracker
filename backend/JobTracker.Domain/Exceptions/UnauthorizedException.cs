@@ -12,5 +12,10 @@ namespace JobTracker.Domain.Exceptions
             : base("You are not authorized to perform this action.")
         {
         }
+
+        public UnauthorizedException(string message)
+        : base(message)
+        {
+        }
     }
 }

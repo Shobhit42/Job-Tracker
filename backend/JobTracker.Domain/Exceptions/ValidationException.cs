@@ -15,5 +15,14 @@ namespace JobTracker.Domain.Exceptions
         {
             Errors = errors;
         }
+
+        public ValidationException(string error)
+        : base("One or more validation errors occurred.")
+        {
+            Errors = new Dictionary<string, string[]>
+        {
+            { "error", new[] { error } }
+        };
+        }
     }
 }

@@ -26,8 +26,8 @@ publish/
 # Environment files (NEVER push these)
 .env
 .env.local
-appsettings.*.json
-!appsettings.json
+appsettings.Development.json
+appsettings.Production.json
 secrets.json
 **/secrets.json
 

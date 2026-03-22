@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace JobTracker.Application.Features.JobApplications.Commands.UpateJobApplication
 {
-    internal class UpdateJobApplicationCommandValidator : AbstractValidator<UpdateJobApplicationCommand>
+    public class UpdateJobApplicationCommandValidator : AbstractValidator<UpdateJobApplicationCommand>
     {
         public UpdateJobApplicationCommandValidator()
         {

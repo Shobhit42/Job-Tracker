@@ -8,8 +8,8 @@ namespace JobTracker.API.Middleware
 {
     public class ExceptionHandlingMiddleware : IMiddleware
     {
-        private readonly ILogger _logger;
-        public ExceptionHandlingMiddleware(ILogger logger)
+        private readonly ILogger<ExceptionHandlingMiddleware> _logger;
+        public ExceptionHandlingMiddleware(ILogger<ExceptionHandlingMiddleware> logger)
         {
             _logger = logger;
         }
@@ -45,6 +45,11 @@ namespace JobTracker.API.Middleware
                     : exception.Message,
                 Type = $"https://tools.ietf.org/html/rfc7231#section-6.{(int)statusCode / 100}.{(int)statusCode % 100}"
             };
+            
+            if (exception is ValidationException validationException)
+            {
+                problemDetails.Extensions["errors"] = validationException.Errors;
+            }
 
             context.Response.ContentType = "application/problem+json";
             context.Response.StatusCode = (int)statusCode;

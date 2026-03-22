@@ -1,4 +1,4 @@
-using JobTracker.API.Middleware;
+﻿using JobTracker.API.Middleware;
 using JobTracker.Application;   
 using JobTracker.Infrastructure;
 using Serilog;

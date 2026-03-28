@@ -1,6 +1,8 @@
 ﻿using JobTracker.Application.Interfaces;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using System.Text.Json;
 
 namespace JobTracker.Application.Features.JobApplications.Queries.GetJobApplications
 {
@@ -8,14 +10,31 @@ namespace JobTracker.Application.Features.JobApplications.Queries.GetJobApplicat
     {
         private readonly IApplicationDbContext _context;
         private readonly ICurrentUserService _currentUserService;
-        public GetJobApplicationsQueryHandler(IApplicationDbContext context, ICurrentUserService currentUserService) 
+        private readonly ICacheService _cache;
+        private readonly ILogger<GetJobApplicationsQueryHandler> _logger;
+        public GetJobApplicationsQueryHandler(IApplicationDbContext context, ICurrentUserService currentUserService, ICacheService cache,
+        ILogger<GetJobApplicationsQueryHandler> logger) 
         {
             _context = context;
             _currentUserService = currentUserService;
+            _cache = cache;
+            _logger = logger;
         }
 
         public async Task<List<GetJobApplicationDto>> Handle(GetJobApplicationsQuery request, CancellationToken cancellationToken)
         {
+            var userId = _currentUserService.UserId;
+
+            var cacheKey = $"job-applications:user:{userId}";
+            var cached = await _cache.GetAsync(cacheKey);
+            if (cached is not null)
+            {
+                _logger.LogInformation("Cache HIT for {CacheKey}", cacheKey);
+                return JsonSerializer.Deserialize<List<GetJobApplicationDto>>(cached)!;
+            }
+
+            _logger.LogInformation("Cache MISS for {CacheKey}. Fetching from DB.", cacheKey);
+
             var jobApplications = _context.JobApplications.Where(application => application.UserId == _currentUserService.UserId);
 
             if (request.Status.HasValue)
@@ -29,7 +48,7 @@ namespace JobTracker.Application.Features.JobApplications.Queries.GetJobApplicat
             if (request.DateTo.HasValue)
                 jobApplications = jobApplications.Where(application => application.AppliedDate <= request.DateTo);
 
-            return await jobApplications
+            var applications = await jobApplications
                 .OrderByDescending(x => x.AppliedDate)
                 .Select(x => new GetJobApplicationDto 
                 {                                       
@@ -44,6 +63,10 @@ namespace JobTracker.Application.Features.JobApplications.Queries.GetJobApplicat
                     CreatedAt = x.CreatedAt
                 })
                 .ToListAsync(cancellationToken);
+
+            await _cache.SetAsync(cacheKey, JsonSerializer.Serialize(applications), TimeSpan.FromMinutes(5));
+
+            return applications;
         }
     }
 }

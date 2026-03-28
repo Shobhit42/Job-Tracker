@@ -14,11 +14,13 @@ namespace JobTracker.Application.Features.JobApplications.Commands.UpateJobAppli
     {
         private readonly IApplicationDbContext _context;
         private readonly ICurrentUserService _currentUserService;
+        private readonly ICacheService _cache;
 
-        public UpdateJobApplicationCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
+        public UpdateJobApplicationCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService, ICacheService cache)
         {
             _context = context;
             _currentUserService = currentUserService;
+            _cache = cache;
         }
         public async Task<Guid> Handle(UpdateJobApplicationCommand request, CancellationToken cancellationToken)
         {
@@ -36,6 +38,7 @@ namespace JobTracker.Application.Features.JobApplications.Commands.UpateJobAppli
             application.UpdatedAt = DateTime.UtcNow;
 
             await _context.SaveChangesAsync(cancellationToken);
+            await _cache.RemoveAsync($"job-applications:user:{_currentUserService.UserId}");
 
             return application.Id;
         }

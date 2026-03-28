@@ -15,13 +15,15 @@ namespace JobTracker.Application.Features.JobApplications.Commands.DeleteJobAppl
     {
         private readonly IApplicationDbContext _context;
         private readonly ICurrentUserService _currentUserService;
+        private readonly ICacheService _cache;
 
         public DeleteJobApplicationCommandHandler(
             IApplicationDbContext context,
-            ICurrentUserService currentUserService)
+            ICurrentUserService currentUserService, ICacheService cache)
         {
             _context = context;
             _currentUserService = currentUserService;
+            _cache = cache;
         }
 
         public async Task<Guid> Handle(DeleteJobApplicationCommand request, CancellationToken cancellationToken)
@@ -38,6 +40,8 @@ namespace JobTracker.Application.Features.JobApplications.Commands.DeleteJobAppl
             _context.JobApplications.Remove(application);
 
             await _context.SaveChangesAsync(cancellationToken);
+
+            await _cache.RemoveAsync($"job-applications:user:{_currentUserService.UserId}");
 
             return application.Id;
         }

@@ -9,11 +9,13 @@ namespace JobTracker.Application.Features.JobApplications.Commands.AddJobApplica
     {
         private readonly IApplicationDbContext _context;
         private readonly ICurrentUserService _currentUserService;
+        private readonly ICacheService _cache;
 
-        public AddJobApplicationCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService)
+        public AddJobApplicationCommandHandler(IApplicationDbContext context, ICurrentUserService currentUserService, ICacheService cache)
         {
             _context = context;
             _currentUserService = currentUserService;
+            _cache = cache;
         }
 
         public async Task<Guid> Handle(AddJobApplicationCommand request, CancellationToken cancellationToken)
@@ -39,6 +41,7 @@ namespace JobTracker.Application.Features.JobApplications.Commands.AddJobApplica
 
             _context.JobApplications.Add(application);
             await _context.SaveChangesAsync(cancellationToken);
+            await _cache.RemoveAsync($"job-applications:user:{_currentUserService.UserId}");
             return application.Id;
         }
     }

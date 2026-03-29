@@ -1,5 +1,8 @@
-﻿using JobTracker.Application.Interfaces;
+﻿using Hangfire;
+using Hangfire.PostgreSql;
+using JobTracker.Application.Interfaces;
 using JobTracker.Infrastructure.Identity;
+using JobTracker.Infrastructure.Jobs;
 using JobTracker.Infrastructure.Persistence;
 using JobTracker.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -57,10 +60,10 @@ namespace JobTracker.Infrastructure
             {
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
-                    ValidateIssuer = true,           // Token must come from our server
-                    ValidateAudience = true,         // Token must be meant for our app
-                    ValidateLifetime = true,         // Token must not be expired
-                    ValidateIssuerSigningKey = true, // Token must be signed with our secret key
+                    ValidateIssuer = true, 
+                    ValidateAudience = true,      
+                    ValidateLifetime = true,      
+                    ValidateIssuerSigningKey = true, 
                     ValidIssuer = jwtIssuer,
                     ValidAudience = jwtAudience,
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey)),
@@ -72,11 +75,26 @@ namespace JobTracker.Infrastructure
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IAuthService, AuthService>();
             var redisConnectionString = configuration["Redis:ConnectionString"];
-            Console.WriteLine($">>> Redis connection string: '{redisConnectionString}'");
 
             services.AddSingleton<IConnectionMultiplexer>(
                 ConnectionMultiplexer.Connect(redisConnectionString!));
             services.AddScoped<ICacheService, RedisService>();
+
+            services.AddHangfire(config => config
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_180)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UsePostgreSqlStorage(options =>
+            {
+                options.UseNpgsqlConnection(
+                    configuration.GetConnectionString("DefaultConnection")!
+                );
+            }));
+            services.AddHangfireServer();
+            services.AddScoped<AutoGhostingJob>();
+            services.AddScoped<InterviewReminderJob>();
+            services.AddScoped<FollowUpNudgeJob>();
+            services.AddScoped<RefreshTokenCleanupJob>();
             return services;
         }
     }

@@ -18,8 +18,9 @@ public class RefreshTokenCleanupJob
     public async Task ExecuteAsync()
     {
         var now = DateTime.UtcNow;
+
         var deadTokens = await _context.RefreshTokens
-            .Where(t => t.IsActive)
+            .Where(t => t.IsRevoked || t.ExpiresAt <= now)
             .ToListAsync();
 
         if (!deadTokens.Any())

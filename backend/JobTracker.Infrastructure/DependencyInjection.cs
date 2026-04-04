@@ -74,6 +74,13 @@ namespace JobTracker.Infrastructure
             services.AddScoped<ICurrentUserService, CurrentUserService>();
             services.AddScoped<IJwtService, JwtService>();
             services.AddScoped<IAuthService, AuthService>();
+            services.AddTransient<IAiService, OpenAiService>();
+            services.AddHttpClient("PageFetcher", client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(15);
+                client.DefaultRequestHeaders.Add("User-Agent",
+                    "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/120.0.0.0 Safari/537.36");
+            });
             var redisConnectionString = configuration["Redis:ConnectionString"];
 
             services.AddSingleton<IConnectionMultiplexer>(

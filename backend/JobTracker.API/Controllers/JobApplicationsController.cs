@@ -4,6 +4,7 @@ using JobTracker.Application.Features.JobApplications.Commands.AddJobApplication
 using JobTracker.Application.Features.JobApplications.Commands.DeleteJobApplication;
 using JobTracker.Application.Features.JobApplications.Commands.UpateJobApplication;
 using JobTracker.Application.Features.JobApplications.Commands.UpdateApplicationStatus;
+using JobTracker.Application.Features.JobApplications.Queries.ExtractJobDetails;
 using JobTracker.Application.Features.JobApplications.Queries.GetJobApplicationById;
 using JobTracker.Application.Features.JobApplications.Queries.GetJobApplications;
 using JobTracker.Application.Features.Skill.Command;
@@ -218,5 +219,15 @@ namespace JobTracker.API.Controllers
 
             return Created(string.Empty, new { id = tagId });
         }
+
+        [HttpPost("extract")]
+        public async Task<IActionResult> ExtractJobDetails([FromBody] ExtractJobDetailsRequest request)
+        {
+            var query = new ExtractJobDetailsQuery(request.JobUrl);
+            var result = await _mediator.Send(query);
+            return Ok(result);
+        }
+
+        public record ExtractJobDetailsRequest(string JobUrl);
     }
 }
